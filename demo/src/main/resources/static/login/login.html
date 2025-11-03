@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/Ajudaê.ico" type="image/x-icon">
+    <title>Login - Ajudaê</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos principais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(45deg, #1ac95d, #4CAF50, #76c7c0, #1ac95d);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Animação do gradiente */
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+/* Navbar */
+.navbar {
+    background-color: #ffffff;
+    font-weight: 600;
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0 0 8px 8px;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo */
+.navbar .logo {
+    text-decoration: none;
+    color: #1ac95d;
+    font-size: 1.5em;
+    transition: color 0.3s ease;
+}
+
+.navbar .logo img {
+    height: 40px; /* Ajuste o tamanho do logo conforme necessário */
+    margin-right: 10px;
+}
+
+.navbar h1 {
+    color: #1ac95d;
+    font-size: 1.5em;
+}
+
+/* Menu */
+.menu {
+    display: flex;
+}
+
+.menu a {
+    color: #1ac95d;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin: 0 5px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.menu a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.menu a.active {
+    border-bottom: 2px solid #1ac95d;
+}
+
+
+        /* Container do Login */
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            margin-top: 80px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-container:hover {
+            transition: transform 0.5s;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        h2 {
+            text-align: center;
+            color: #1ac95d;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus {
+            border-color: #1ac95d;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #1ac95d;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #69b686;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        /* Estilos do fundo embacado para o pop-up */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+
+        /* Estilos do pop-up */
+        .error-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            color: #1ac95d;
+            border: 2px solid #1ac95d;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            z-index: 1001;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .error-popup p {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: #1ac95d;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            width: auto;
+            height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-btn:hover {
+            color: #ffffff;
+        }
+
+        /* Animação de fade-in */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+
+        /* Responsivo */
+        @media (max-width: 400px) {
+            .login-container {
+                padding: 20px;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="../index.html" class="logo">
+            <h1>Ajudaê</h1>
+        </a>
+        <div class="menu">
+            <a href="../index.html">Home</a>
+            <a href="../adm/adm.html" style="display: none;">Adm</a>
+            <a href="../funciona/como-funciona.html">Como Funciona</a>
+            <a href="../contato/contato.html">Contatos</a>
+            <a href="../login/login.html">Login</a>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Usuário</label>
+                <input type="text" id="username" placeholder="Digite seu usuário" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" placeholder="Digite sua senha" required>
+            </div>
+            <button type="submit">Entrar</button>
+        </form>
+        <div class="footer">
+            <p>Esqueceu a senha? <a href="#" style="color: #4b504d; text-decoration: underline;">Clique aqui</a></p>
+        </div>
+    </div>
+
+    <!-- Fundo embacado e pop-up de recuperação de senha -->
+    <div class="overlay" id="forgotPasswordOverlay"></div>
+    <div class="error-popup" id="forgotPasswordCard">
+        <button class="close-btn" id="closeButton" onclick="fecharEsqueciSenha()">✕</button>
+        <form id="forgotPasswordForm">
+            <p>Recuperar Senha</p>
+            <label for="email">Digite seu email</label>
+            <input type="email" id="email" placeholder="Seu email" required>
+            <button type="submit">Enviar</button>
+            <p id="message" style="display:none; margin-top: 10px; color: #1ac95d;">Link de acesso enviado!</p>
+        </form>
+    </div>
+
+    <!-- Fundo embacado e pop-up de erro de login -->
+    <div class="overlay" id="errorOverlay"></div>
+    <div class="error-popup" id="errorPopup">
+        <button class="close-btn" onclick="fecharPopupErro()">✕</button>
+        <p>Login incorreto! Tente novamente.</p>
+    </div>
+
+    <script>
+        // Função para autenticar o usuário
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const usuario = document.getElementById('username').value;
+            const senha = document.getElementById('password').value;
+
+            // Se as credenciais forem corretas, redireciona para a página de admin
+            if (usuario === 'adm' && senha === 'adm') {
+                window.location.href = '../adm/adm.html';
+            } else {
+                mostrarPopupErro();
+            }
+        });
+
+        // Função para exibir o pop-up de erro e o fundo embacado
+        function mostrarPopupErro() {
+            document.getElementById('errorOverlay').style.display = 'block';
+            document.getElementById('errorPopup').style.display = 'block';
+        }
+
+        // Função para fechar o pop-up de erro
+        function fecharPopupErro() {
+            document.getElementById('errorOverlay').style.display = 'none';
+            document.getElementById('errorPopup').style.display = 'none';
+        }
+
+        // Função para abrir o card de recuperação de senha
+        document.querySelector('.footer a').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('forgotPasswordOverlay').style.display = 'block';
+            document.getElementById('forgotPasswordCard').style.display = 'block';
+        });
+
+        // Função para fechar o card de recuperação de senha
+        function fecharEsqueciSenha() {
+            document.getElementById('forgotPasswordOverlay').style.display = 'none';
+            document.getElementById('forgotPasswordCard').style.display = 'none';
+            document.getElementById('message').style.display = 'none';
+            document.getElementById('closeButton').style.display = 'none';
+        }
+
+        // Função para exibir a mensagem de sucesso ao enviar o email
+        document.getElementById('forgotPasswordForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            document.getElementById('message').style.display = 'block';
+            document.getElementById('closeButton').style.display = 'block';
+        });
+
+        // Identifica o link da página atual e adiciona a classe 'active'
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+
+            if (currentPath.includes("index.html")) {
+                document.querySelector(".menu a[href*='index.html']").classList.add("active");
+            } else if (currentPath.includes("adm.html")) {
+                document.querySelector(".menu a[href*='adm.html']").classList.add("active");
+            } else if (currentPath.includes("como-funciona.html")) {
+                document.querySelector(".menu a[href*='como-funciona.html']").classList.add("active");
+            } else if (currentPath.includes("login.html")) {
+                document.querySelector(".menu a[href*='login.html']").classList.add("active");
+            }
+        });
+    </script>
+</body>
+</html>

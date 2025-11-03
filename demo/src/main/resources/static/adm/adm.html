@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/Ajudaê.ico" type="image/x-icon">
+    <title>Administração de Doações</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif; 
+            background-color: #f4f4f4; 
+            color: #1a1a1a;
+            line-height: 1.6;
+            display: flex; 
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            font-weight: 600;
+            width: 100%;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0 0 8px 8px;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            color: #1ac95d;
+            font-size: 1.5em;
+        }
+
+        .menu {
+            display: flex;
+        }
+
+        .menu a {
+            color: #1ac95d;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .content {
+            margin-top: 80px;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .campanha-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .campanha-card h3 {
+            color: #1ac95d;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .btn-footer {
+            display: flex; 
+            margin-top: auto; 
+            justify-content: flex-end
+        }
+
+        .edit-btn, .insert-btn, .delete-btn {
+            padding: 8px 15px;
+            margin: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background-color: #1ac95d;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+        }
+
+        #container-insert-btn {
+            text-align: center;
+        }
+
+        .insert-btn {
+            margin: 0 auto;
+            background-color: #1ac95d;
+            color: white;
+        }
+
+        .form-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            z-index: 2000;
+        }
+
+        .form-popup input, .form-popup textarea {
+            width: 90%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            z-index: 2000;
+        }
+
+        .popup.error { border: 2px solid #ff4d4d; }
+        
+        .popup p {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .popup button {
+            margin-top: 15px;
+            padding: 8px 20px;
+            background-color: #1ac95d;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 8px 15px;
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .logo {
+            text-decoration: none;
+            color: #1ac95d;
+            font-size: 1.2em;
+            transition: color 0.3s ease;
+        } 
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="../index.html" class="logo">
+            <h1>Ajudaê</h1>
+        </a>
+        <div class="menu">
+            <a href="../login/login.html">Sair</a>
+        </div>
+    </div>
+
+    <div class="content" id="campanhasContainer">
+        <!-- Cards de campanhas serão carregados aqui -->
+    </div>
+
+    <div id="container-insert-btn">
+        <button class="insert-btn" onclick="abrirFormularioInserir()">Inserir Nova Campanha</button>
+    </div>
+
+    <div class="overlay" id="confirmationOverlay">
+        <div class="popup error">
+            <p>Tem certeza que deseja excluir esta campanha?</p>
+            <button onclick="confirmarExclusao()">Sim</button>
+            <button class="cancel-btn" onclick="fecharConfirmacao()">Não</button>
+        </div>
+    </div>
+
+    <!-- Formulário de criação e edição de campanha -->
+    <div class="form-popup" id="formCampanha">
+        <h2 id="formTitulo">Inserir Nova Campanha</h2>
+        <input type="hidden" id="campanhaId">
+        <input type="text" id="campanhaNome" placeholder="Nome da Campanha">
+        <textarea id="campanhaDescricao" placeholder="Descrição da Campanha"></textarea>
+        <input type="number" id="campanhaMeta" placeholder="Meta">
+        <input type="number" id="campanhaValorArrecadado" placeholder="Valor Arrecadado">
+        <input type="text" id="campanhaCausa" placeholder="Causa">
+        <input type="date" id="campanhaDataInicio">
+        <input type="date" id="campanhaDataFim">
+        <button class="cancel-btn" onclick="fecharFormulario()">Fechar</button>       
+        <button class="edit-btn" onclick="salvarCampanha()">Salvar</button>
+    </div>
+
+    <script>
+        let campanhaParaExcluir;
+
+        async function carregarCampanhas() {
+            try {
+                const response = await fetch('/api/campanhas');
+                const campanhas = await response.json();
+                
+                const container = document.getElementById('campanhasContainer');
+                container.innerHTML = '';
+
+                campanhas.forEach(campanha => {
+                    const card = document.createElement('div');
+                    card.classList.add('campanha-card');
+                    card.innerHTML = `
+                        <h3>${campanha.nome}</h3>
+                        <div>
+                            <p><strong>ID:</strong> ${campanha.id}</p>
+                            <p><strong>Descrição:</strong> ${campanha.descricao}</p>
+                            <p><strong>Meta:</strong> R$ ${campanha.meta}</p>
+                            <p><strong>Valor Arrecadado:</strong> R$ ${campanha.valorArrecadado}</p>
+                            <p><strong>Causa:</strong> ${campanha.causa}</p>
+                            <p><strong>Data Início:</strong> ${campanha.dataInicio}</p>
+                            <p><strong>Data Fim:</strong> ${campanha.dataFim}</p>
+                        </div>
+                        <div class="btn-footer">
+                            <button class="edit-btn" onclick="abrirFormularioEditar(${campanha.id})">Editar</button>
+                            <button class="delete-btn" onclick="mostrarConfirmacao(${campanha.id})">Excluir</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar as campanhas:', error);
+            }
+        }
+
+        function abrirFormularioInserir() {
+            document.getElementById('formTitulo').innerText = 'Inserir Nova Campanha';
+            document.getElementById('campanhaId').value = '';
+            document.getElementById('campanhaNome').value = '';
+            document.getElementById('campanhaDescricao').value = '';
+            document.getElementById('campanhaMeta').value = '';
+            document.getElementById('campanhaValorArrecadado').value = '';
+            document.getElementById('campanhaCausa').value = '';
+            document.getElementById('campanhaDataInicio').value = '';
+            document.getElementById('campanhaDataFim').value = '';
+            document.getElementById('formCampanha').style.display = 'block';
+            document.getElementById('confirmationOverlay').style.display = 'flex';
+        }
+
+        function abrirFormularioEditar(id) {
+            fetch(`/api/campanhas/${id}`)
+                .then(response => response.json())
+                .then(campanha => {
+                    document.getElementById('formTitulo').innerText = 'Editar Campanha';
+                    document.getElementById('campanhaId').value = id;
+                    document.getElementById('campanhaNome').value = campanha.nome;
+                    document.getElementById('campanhaDescricao').value = campanha.descricao;
+                    document.getElementById('campanhaMeta').value = campanha.meta;
+                    document.getElementById('campanhaValorArrecadado').value = campanha.valorArrecadado;
+                    document.getElementById('campanhaCausa').value = campanha.causa;
+                    document.getElementById('campanhaDataInicio').value = campanha.dataInicio;
+                    document.getElementById('campanhaDataFim').value = campanha.dataFim;
+                    document.getElementById('formCampanha').style.display = 'block';
+                    document.getElementById('confirmationOverlay').style.display = 'flex';
+                })
+                .catch(error => console.error('Erro ao carregar a campanha para edição:', error));
+        }
+
+
+        function salvarCampanha() {
+            const id = document.getElementById('campanhaId').value;
+            const campanha = {
+                nome: document.getElementById('campanhaNome').value,
+                descricao: document.getElementById('campanhaDescricao').value,
+                meta: parseFloat(document.getElementById('campanhaMeta').value),
+                valorArrecadado: parseFloat(document.getElementById('campanhaValorArrecadado').value),
+                causa: document.getElementById('campanhaCausa').value,
+                dataInicio: document.getElementById('campanhaDataInicio').value,
+                dataFim: document.getElementById('campanhaDataFim').value,
+            };
+
+            fetch(id ? `/api/campanhas/${id}` : '/api/campanhas', {
+                method: id ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(campanha)
+            })
+            .then(response => {
+                if (response.ok) {
+                    carregarCampanhas();
+                    fecharFormulario();
+                } else {
+                    console.error('Erro ao salvar a campanha');
+                }
+            })
+            .catch(error => console.error('Erro ao salvar a campanha:', error));
+        }
+
+        function fecharFormulario() {
+            document.getElementById('formCampanha').style.display = 'none';
+            document.getElementById('confirmationOverlay').style.display = 'none';
+        }
+
+        function mostrarConfirmacao(id) {
+            campanhaParaExcluir = id;
+            document.getElementById('confirmationOverlay').style.display = 'flex';
+            document.querySelector('.popup.error').style.display = 'block';
+        }
+
+        function fecharConfirmacao() {
+            document.getElementById('confirmationOverlay').style.display = 'none';
+            document.querySelector('.popup.error').style.display = 'none';
+            campanhaParaExcluir = null;
+        }
+
+        async function confirmarExclusao() {
+            if (campanhaParaExcluir) {
+                try {
+                    const response = await fetch(`/api/campanhas/${campanhaParaExcluir}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        carregarCampanhas();
+                    } else {
+                        console.error('Erro ao excluir a campanha');
+                    }
+                } catch (error) {
+                    console.error('Erro ao excluir a campanha:', error);
+                }
+                fecharConfirmacao();
+            }
+        }
+
+        window.onload = carregarCampanhas;
+    </script>
+    
+</body>
+</html>

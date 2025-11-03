@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/Ajudaê.ico" type="image/x-icon">
+    <title>Campanhas - Ajudaê</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { font-family: 'Roboto', sans-serif; background-color: #f4f4f4; color: #1a1a1a; line-height: 1.6; display: flex; flex-direction: column; }
+        
+        .navbar {
+            background-color: #ffffff;
+            font-weight: 600;
+            width: 100%;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0 0 8px 8px;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar h1 { color: #1ac95d; font-size: 1.5em; }
+        
+        .menu { display: flex; }
+        
+        .menu a { color: #1ac95d; text-decoration: none; padding: 10px 15px; margin: 0 5px; border-radius: 4px; transition: background-color 0.3s; }
+        
+        .menu a:hover { background-color: rgba(255, 255, 255, 0.2); }
+
+        .menu a.active { border-bottom: 2px solid #1ac95d; }
+
+        .content { margin-top: 80px; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+
+        .campanha-card {
+            background-color: #ffffff;
+            width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .campanha-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .campanha-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .campanha-info {
+            padding: 15px;
+            color: #333;
+        }
+
+        .campanha-info h2 { font-size: 1.2em; color: #1ac95d; margin-bottom: 10px; }
+
+        .doar-input { width: 120px; padding: 6px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; text-align: center; margin-right: 8px; }
+        
+        .doar-btn {
+            padding: 8px 20px;
+            background-color: #1ac95d;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+            height: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .progress {
+            background-color: #1ac95d;
+            height: 100%;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); padding: 20px; text-align: center; z-index: 2000; }
+        
+        .popup.success { border: 2px solid #1ac95d; }
+        
+        .popup.error { border: 2px solid #ff4d4d; }
+        
+        .popup button { margin-top: 15px; padding: 8px 20px; background-color: #1ac95d; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; }
+        
+        .logo {
+            text-decoration: none;
+            color: #1ac95d;
+            font-size: 1.5em;
+            transition: color 0.3s ease;
+        } 
+
+        .popup img {
+            display: block;
+            margin: 0 auto 10px;
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="../index.html" class="logo">
+            <h1>Ajudaê</h1>
+        </a>
+        <div class="menu">
+            <a href="../index.html" class="active">Home</a>
+            <a href="../adm/adm.html" style="display: none;">Adm</a>
+            <a href="../funciona/como-funciona.html">Como Funciona</a>
+            <a href="../contato/contato.html">Contatos</a>
+            <a href="../login/login.html">Login</a>
+        </div>
+    </div>
+
+    <div class="content" id="campanhasContainer"></div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <img id="popupImage" src="" alt="" style="display:none;">
+        <h2 id="popupTitle"></h2>
+        <p id="popupMessage"></p>
+        <button onclick="closePopup()">Fechar</button>
+    </div>
+
+    <footer style="background-color: #ffffff; width: 100%; padding: 20px; text-align: center; margin-top: 40px; box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);">
+        <p style="color: #1a1a1a; font-size: 1em;">&copy; 2024 Ajudaê. Todos os direitos reservados.</p>
+        <div style="margin-top: 10px;">
+            <a href="../index.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Home</a>
+            <a href="../funciona/como-funciona.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Como Funciona</a>
+            <a href="../contato/contato.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Contatos</a>
+            <a href="../login/login.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Login</a>
+        </div>
+    </footer>
+
+    <script>
+           async function carregarCampanhas() {
+    try {
+        const response = await fetch('/api/campanhas');
+        const campanhas = await response.json();
+
+        const container = document.getElementById('campanhasContainer');
+        const imagensAlternativas = [
+            'imagens/campanha.png'
+        ];
+
+        campanhas.forEach(campanha => {
+    let card = document.getElementById(`campanha-card-${campanha.id}`);
+    const porcentagem = campanha.meta > 0 
+        ? Math.floor((campanha.valorArrecadado / campanha.meta) * 100) 
+        : 0;
+
+    if (card) {
+        // Atualizar os dados existentes no card
+        document.getElementById(`valorArrecadado-${campanha.id}`).textContent = campanha.valorArrecadado.toFixed(2);
+        card.querySelector('.progress').style.width = `${porcentagem}%`;
+        card.querySelector('.progress-porcentagem').textContent = `${porcentagem}%`;
+        return;
+    }
+
+    // Criação do novo card
+    card = document.createElement('div');
+    card.className = 'campanha-card';
+    card.id = `campanha-card-${campanha.id}`;
+
+    const imagemUrl = campanha.imagemUrl || imagensAlternativas[campanha.id % imagensAlternativas.length];
+    const doacaoCompleta = campanha.valorArrecadado >= campanha.meta;
+    const botaoDoacaoEstilo = doacaoCompleta ? 'background-color: gray; cursor: not-allowed;' : 'background-color: #1ac95d;';
+
+    card.innerHTML = `
+        <img src="${imagemUrl}" alt="${campanha.nome}">
+        <div class="campanha-info">
+            <h2>${campanha.nome}</h2>
+            <p>${campanha.descricao}</p>
+            <p><strong>Meta:</strong> R$ ${campanha.meta.toFixed(2)}</p>
+            <p><strong>Arrecadado:</strong> R$ <span id="valorArrecadado-${campanha.id}">${campanha.valorArrecadado.toFixed(2)}</span></p>
+            <p class="progress-porcentagem">${porcentagem}%</p>
+            <div class="progress-bar">
+                <div class="progress" style="width: ${porcentagem}%;"></div>
+            </div>
+            <input type="number" min="1" placeholder="Valor R$" id="donationValue-${campanha.id}" class="doar-input" />
+            <button class="doar-btn" style="${botaoDoacaoEstilo}" onclick="doarParaCampanha(${campanha.id})" ${doacaoCompleta ? 'disabled' : ''}>Doar</button>
+        </div>
+    `;
+    container.appendChild(card);
+});
+
+
+    } catch (error) {
+        showPopup("Erro", "Erro ao carregar as campanhas. Tente novamente mais tarde.", "error");
+    }
+}
+
+
+async function doarParaCampanha(id) {
+    const valorInput = document.getElementById(`donationValue-${id}`);
+    let valor = valorInput.value.replace(',', '.');
+
+    // Validação de valor
+    if (parseFloat(valor) <= 0 || isNaN(parseFloat(valor))) {
+        showPopup("Erro", "Por favor, insira um valor válido para a doação (maior que 0).", "error");
+        return;
+    }
+
+    const valorEnviado = parseFloat(valor).toFixed(2);
+
+    try {
+        // Obter os dados atuais da campanha
+        const responseCampanha = await fetch(`/api/campanhas/${id}`);
+        if (!responseCampanha.ok) {
+            showPopup("Erro", "Campanha não encontrada.", "error");
+            return;
+        }
+
+        const campanha = await responseCampanha.json();
+
+        // Somar o valor ao valor atual
+        const novoValorArrecadado = (parseFloat(campanha.valorArrecadado) + parseFloat(valorEnviado)).toFixed(2);
+
+        // Enviar o valor atualizado para o backend
+        const response = await fetch(`/api/campanhas/${id}/doar`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ valorArrecadado: novoValorArrecadado })
+        });
+
+        if (response.ok) {
+            // Atualizar o valor na interface
+            document.getElementById(`valorArrecadado-${id}`).textContent = novoValorArrecadado;
+            valorInput.value = '';
+            showPopup("Sucesso", "Sua doação foi registrada com sucesso!", "success");
+            carregarCampanhas();
+        } else {
+            const errorMessage = await response.text();
+            showPopup("Erro", errorMessage || "Erro ao realizar a doação. Tente novamente.", "error");
+        }
+    } catch (error) {
+        showPopup("Erro", "Ocorreu um erro ao processar a doação. Tente novamente mais tarde.", "error");
+    }
+}
+
+
+    function atualizarValor(id, valorArrecadadoAtual, meta) {
+    const valorInput = document.getElementById(`donationValue-${id}`);
+    const novoValor = parseFloat(valorInput.value) || 0;
+    const total = valorArrecadadoAtual + novoValor;
+
+    const percentual = Math.min(Math.floor((total / meta) * 100), 100);
+
+    // Atualiza o valor arrecadado e a barra de progresso no HTML
+    document.getElementById(`valorArrecadado-${id}`).textContent = total.toFixed(2);
+    document.getElementById(`percentual-${id}`).textContent = `${percentual}%`;
+    document.getElementById(`progress-${id}`).style.width = `${percentual}%`;
+}
+
+
+        function showPopup(title, message, type) {
+            const popup = document.getElementById("popup");
+            const overlay = document.getElementById("overlay");
+            const popupImage = document.getElementById("popupImage");
+
+            popup.className = `popup ${type}`;
+            document.getElementById("popupTitle").textContent = title;
+            document.getElementById("popupMessage").textContent = message;
+
+            if (type === "success") {
+                popupImage.src = "/qrcode.png"; // Caminho da imagem
+                popupImage.style.display = "block";
+            } else {
+                popupImage.style.display = "none";
+            }
+
+            popup.style.display = "block";
+            overlay.style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        window.onload = carregarCampanhas;
+    </script>
+
+</body>
+</html>

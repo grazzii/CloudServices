@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/Ajudaê.ico" type="image/x-icon">
+    <title>Como Funciona - Ajudaê</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos Globais */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { font-family: 'Roboto', sans-serif; background-color: #f4f4f4; color: #1a1a1a; display: flex; flex-direction: column; align-items: center; }
+
+        /* Navbar */
+        .navbar {
+            background-color: #ffffff;
+            font-weight: 600;
+            width: 100%;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0 0 8px 8px;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            text-decoration: none;
+            color: #1ac95d;
+            font-size: 1.5em;
+            transition: color 0.3s ease;
+        }
+        
+        .logo:hover {
+            color: #138a4c;
+        }
+
+        .menu {
+            display: flex;
+        }
+
+        .menu a {
+            color: #1ac95d;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .menu a:hover {
+            background-color: rgba(26, 201, 93, 0.1);
+            color: #138a4c;
+        }
+
+        .menu a.active {
+            border-bottom: 2px solid #1ac95d;
+        }
+
+        /* Conteúdo Principal */
+        .content {
+            margin-top: 100px;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        header h2 {
+            color: #1ac95d;
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .step {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+        }
+
+        .step h4 {
+            font-size: 1.5em;
+            color: #1ac95d;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .step p {
+            font-size: 1em;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Estilos para os Ícones */
+        .step-icon {
+            font-size: 1.3em;
+            color: #1ac95d;
+            margin-right: 8px;
+        }
+
+        /* Estilo da Barra de Navegação Ativa */
+        .menu a.active {
+            border-bottom: 2px solid #1ac95d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="../index.html" class="logo">
+            <h1>Ajudaê</h1>
+        </a>
+        <div class="menu">
+            <a href="../index.html">Home</a>
+            <a href="../adm/adm.html" style="display: none;">Adm</a>
+            <a href="../funciona/como-funciona.html">Como Funciona</a>
+            <a href="../contato/contato.html">Contatos</a>
+            <a href="../login/login.html">Login</a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="content">
+        <header>
+            <h2>Como Funciona?</h2>
+        </header>
+        
+        <!-- Etapas -->
+        <div class="step">
+            <h4><span class="step-icon">📋</span>1. Crie sua vaquinha</h4>
+            <p>Defina seu objetivo, seja para uma causa pessoal, um projeto comunitário ou um grande sonho, defina quanto precisa arrecadar e o por quê, identifique o que te engaja.</p>
+            
+        </div>
+
+        <div class="step">
+            <h4><span class="step-icon">❤️</span>2. Conte sua história! </h4>
+            <p>Aqui, o coração fala mais alto. Compartilhe sua história de forma autêntica, detalhando o porquê de sua vaquinha e como cada doação fará a diferença.</p>
+                    </div>
+
+        <div class="step">
+            <h4><span class="step-icon">📣</span>3. Divulgue</h4>
+            <p>Use as redes sociais e compartilhe sua vaquinha nas suas redes sociais e peça para amigos e familiares ajudarem na divulgação.</p>
+        </div>
+
+
+        <div class="step">
+            <h4><span class="step-icon">🙏</span>4. Atualize sua vaquinha</h4>
+            <p> Para destacar suas necessidades, sempre atualize a descrição de sua campanha.</p>
+        </div>
+
+        <div class="step">
+            <h4><span class="step-icon">🎉</span>5. Hora de comemorar!</h4>
+            <p>Saque o valor arrecadado, quando sua vaquinha alcança ou ultrapassa a meta, é hora de comemorar!</p>
+        </div>
+    </div>
+
+    <footer style="background-color: #ffffff; width: 100%; padding: 20px; text-align: center; margin-top: 40px; box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);">
+        <p style="color: #1a1a1a; font-size: 1em;">&copy; 2024 Ajudaê. Todos os direitos reservados.</p>
+        <div style="margin-top: 10px;">
+            <a href="../index.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Home</a>
+            <a href="../funciona/como-funciona.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Como Funciona</a>
+            <a href="../contato/contato.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Contatos</a>
+            <a href="../login/login.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Login</a>
+        </div>
+    </footer>
+
+    <!-- Script para Ativar Links de Navegação -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+
+            if (currentPath.includes("index.html")) {
+                document.querySelector(".menu a[href*='index.html']").classList.add("active");
+            } else if (currentPath.includes("adm.html")) {
+                document.querySelector(".menu a[href*='adm.html']").classList.add("active");
+            } else if (currentPath.includes("como-funciona.html")) {
+                document.querySelector(".menu a[href*='como-funciona.html']").classList.add("active");
+            } else if (currentPath.includes("login.html")) {
+                document.querySelector(".menu a[href*='login.html']").classList.add("active");
+            }
+        });
+    </script>
+    
+</body>
+</html>

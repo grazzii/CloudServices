@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/Ajudaê.ico" type="image/x-icon">
+    <title>Contato - Ajudaê</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos Globais */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { font-family: 'Roboto', sans-serif; background-color: #f4f4f4; color: #1a1a1a; display: flex; flex-direction: column; align-items: center; }
+
+/* Navbar */
+.navbar {
+    background-color: #ffffff;
+    font-weight: 600;
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0 0 8px 8px;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo */
+.navbar .logo {
+    text-decoration: none;
+    color: #1ac95d;
+    font-size: 1.5em;
+    transition: color 0.3s ease;
+}
+
+.navbar .logo img {
+    height: 40px; /* Ajuste o tamanho do logo conforme necessário */
+    margin-right: 10px;
+}
+
+.navbar h1 {
+    color: #1ac95d;
+    font-size: 1.5em;
+}
+
+/* Menu */
+.menu {
+    display: flex;
+}
+
+.menu a {
+    color: #1ac95d;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin: 0 5px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.menu a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.menu a.active {
+    border-bottom: 2px solid #1ac95d;
+}
+
+        /* Conteúdo Principal */
+        .content {
+            margin-top: 100px;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        header h2 {
+            color: #1ac95d;
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* Estilos para a seção de contato */
+        .developer {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .developer:hover {
+            transform: translateY(-5px);
+        }
+
+        .developer img {
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .developer-info {
+            color: #555;
+        }
+
+        .developer-info h4 {
+            font-size: 1.2em;
+            color: #1ac95d;
+            margin-bottom: 5px;
+        }
+
+        .developer-info p {
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        /* Estilo para o rodapé da página de contato */
+        .contact-footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.1em;
+            color: #1ac95d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="../index.html" class="logo">
+            <h1>Ajudaê</h1>
+        </a>
+        <div class="menu">
+            <a href="../index.html">Home</a>
+            <a href="../funciona/como-funciona.html">Como Funciona</a>
+            <a href="../contato/contato.html" class="active">Contato</a>
+            <a href="../login/login.html">Login</a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="content">
+        <header>
+            <h2>Developers</h2>
+        </header>
+        
+        <!-- Desenvolvedor 1 -->
+        <div class="developer">
+            <img src="../imagens/alex.jpg" alt="Foto do Desenvolvedor 1">
+            <div class="developer-info">
+                <h4>Alex Cruz de Santana</h4>
+                <p>Especialista em frontend, com foco em design intuitivo e responsivo, além da integração dos sistemas na plataforma.</p>
+            </div>
+        </div>
+
+        <!-- Desenvolvedor 2 -->
+        <div class="developer">
+            <img src="../imagens/grazi.jpg" alt="Foto do Desenvolvedor 2">
+            <div class="developer-info">
+                <h4>Graziely de Oliveira Severo</h4>
+                <p>Especialista em backend e banco de dados, focada em segurança, eficiência e lógica criada, além de cuidar da parte arquitetural.</p>
+            </div>
+        </div>
+
+        <!-- Desenvolvedor 3 -->
+        <div class="developer">
+            <img src="../imagens/jean.jpg" alt="Foto do Desenvolvedor 3">
+            <div class="developer-info">
+                <h4>Jean Pazzini Domingues</h4>
+                <p>Engenheiro de DevOps e infra, garantindo que a plataforma funcione de forma segura e escalável.</p>
+            </div>
+        </div>
+
+        <!-- E-mail de Contato -->
+        <div class="contact-footer">
+            <p>Entre em contato conosco: <a href="mailto:ajudaê@gmail.com" style="color: #138a4c; text-decoration: none;">ajudae@gmail.com</a></p>
+        </div>
+    </div>
+
+    <footer style="background-color: #ffffff; width: 100%; padding: 20px; text-align: center; margin-top: 40px; box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);">
+        <p style="color: #1a1a1a; font-size: 1em;">&copy; 2024 Ajudaê. Todos os direitos reservados.</p>
+        <div style="margin-top: 10px;">
+            <a href="../index.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Home</a>
+            <a href="../funciona/como-funciona.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Como Funciona</a>
+            <a href="../contato/contato.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Contatos</a>
+            <a href="../login/login.html" style="color: #1ac95d; text-decoration: none; margin: 0 10px;">Login</a>
+        </div>
+    </footer>
+
+    <!-- Script para Ativar Links de Navegação -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+
+            if (currentPath.includes("index.html")) {
+                document.querySelector(".menu a[href*='index.html']").classList.add("active");
+            } else if (currentPath.includes("como-funciona.html")) {
+                document.querySelector(".menu a[href*='como-funciona.html']").classList.add("active");
+            } else if (currentPath.includes("contato.html")) {
+                document.querySelector(".menu a[href*='contato.html']").classList.add("active");
+            } else if (currentPath.includes("login.html")) {
+                document.querySelector(".menu a[href*='login.html']").classList.add("active");
+            }
+        });
+    </script>
+</body>
+</html>

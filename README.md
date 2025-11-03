@@ -55,6 +55,8 @@ O Portal de Doações Ajudaê foi projetado para ser uma plataforma simples e in
 
   - Tela de Contatos:
      - Apresenta, de forma clara e visual, as responsabilidades de cada membro da equipe, mostrando quem contribuiu para a criação do projeto.
+    <img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/5f9ec2f1-4b68-4f28-a3f7-691f14cd1083" />
+
     
   - Tela de Login:
      - Utiliza um fundo em gradiente verde que alterna a paleta automaticamente, e um formulário centralizado, com efeitos sutis de expansão nos campos ao passar o mouse.

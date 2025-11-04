@@ -13,6 +13,7 @@ services:
       - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
       - spring.jpa.properties.hibernate.format_sql=true
       - debug=true
+      - report.internal.token=bancodedados
     ports:
       - "8080:8080"
 

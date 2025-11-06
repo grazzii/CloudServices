@@ -33,27 +33,27 @@ O **Portal de Doações Ajudaê** é uma aplicação simples que reúne campanha
 
 
 
-| Camada       | Serviço                      | Descrição                                                                 |
-| ------------ | ---------------------------- | ------------------------------------------------------------------------- |
-| **Frontend** | React (JavaScript)           | Interface simples e intuitiva para navegação e visualização das campanhas |
-| **Backend**  | EC2 (Docker + Spring Boot)   | API REST responsável pelo CRUD de campanhas e doações                     |
-| **Banco**    | Amazon RDS (MySQL – privada) | Armazena os dados de campanhas e doações; acesso restrito ao backend      |
-| **Gateway**  | Amazon API Gateway           | Encaminha as rotas `/campanhas` para a EC2 e `/report` para a Lambda      |
-| **Função**   | AWS Lambda (`/report`)       | Gera um relatório com totais, top arrecadações e principais causas        |
+| Camada       | Serviço                      | Descrição                                                                              |
+| ------------ | ---------------------------- | -------------------------------------------------------------------------------------- |
+| **Frontend** | React (JavaScript)           | Para deixar o design bonito e interativo                                               |
+| **Backend**  | EC2 (Docker + Spring Boot)   | API REST responsável pelo CRUD de campanhas e doações                                  |
+| **Banco**    | Amazon RDS (MySQL – privada) | Armazena os dados de campanhas e doações; acesso restrito ao backend                   |
+| **Gateway**  | Amazon API Gateway           | Encaminha as rotas `/campanhas` para a EC2 e `/report` para a Lambda                   |
+| **Função**   | AWS Lambda (`/report`)       | Gera um relatório com totais doaçoes e campanhas, top arrecadações e top causas        |
 
 ---
 
 ## 3) Endpoints REST
 
-| Método | Endpoint               | Descrição                                                     |
-| ------ | ---------------------- | ------------------------------------------------------------- |
-| GET    | `/campanhas`           | Retorna todas as campanhas e suas doações                     |
-| GET    | `/campanhas/{id}`      | Detalha uma campanha específica                               |
-| POST   | `/campanhas`           | Cria uma nova campanha                                        |
-| PUT    | `/campanhas/{id}`      | Atualiza uma campanha existente                               |
-| PUT    | `/campanhas/{id}/doar` | Registra uma nova doação                                      |
-| DELETE | `/campanhas/{id}`      | Exclui uma campanha                                           |
-| GET    | `/report` (Lambda)     | Gera relatório consolidado com totais e ranking das campanhas |
+| Método | Endpoint               | Descrição                                                                                               | 
+| ------ | ---------------------- | ------------------------------------------------------------------------------------------------------  |
+| GET    | `/campanhas`           | Retorna todas as campanhas e suas doações                                                               |
+| GET    | `/campanhas/{id}`      | Detalha uma campanha específica                                                                         |
+| POST   | `/campanhas`           | Cria uma nova campanha                                                                                  |
+| PUT    | `/campanhas/{id}`      | Atualiza uma campanha existente                                                                         |
+| PUT    | `/campanhas/{id}/doar` | Registra uma nova doação pra campanha específica                                                        |
+| DELETE | `/campanhas/{id}`      | Exclui uma campanha                                                                                     |
+| GET    | `/report` (Lambda)     | Gera relatório consolidado com totais e ranking das campanhas com maior arrecadamento e causas similares|
 
 ---
 
@@ -141,7 +141,7 @@ export const handler = async () => {
 
 ## 6) Comandos na EC2
 
-Após acessar a instância:
+Após acessar a instância, escreva na EC2:
 
 ```bash
 cd ~/CloudServices
@@ -172,14 +172,14 @@ Esses comandos atualizam o código e recompilam os containers do **backend** e *
 ## 9) Rodando Localmente
 
 ```bash
-# 1. Clonar
+# 1. Clonar o repo
 git clone https://github.com/grazzii/CloudServices.git
 cd CloudServices
 
 # 2. Configurar variáveis
 cp .env.example .env   # editar credenciais do banco
 
-# 3. Subir containers
+# 3. Subir os containers
 docker compose up --build
 ```
 

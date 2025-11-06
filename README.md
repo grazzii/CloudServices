@@ -17,26 +17,25 @@ CRUD simples + API Gateway + Lambda `/report` + RDS
 
 ## 1) Visão Geral
 
-O **Portal de Doações Ajudaê** é uma plataforma simples e intuitiva para visualizar e gerenciar campanhas de arrecadação de fundos por causa.
+O **Portal de Doações Ajudaê** é um site de campanhas variadas, no qual é possível realizar doações e conhecer mais sobre o projeto
 
-* **Backend:** Spring Boot (Java), containerizado.
-* **Frontend:** React (JavaScript).
-* **Infra AWS:** EC2, RDS MySQL, API Gateway e Lambda (rota `/report`).
+* **Backend:** Spring Boot (Java), containerizado
+* **Frontend:** React (JavaScript)
+* **Infra AWS:** EC2, RDS MySQL, API Gateway e Lambda (rota `/report`)
 
-> Está sendo utilizado **Elastic IP** na EC2. Assim, o endpoint público do backend permanece **estável** ([http://54.197.119.102:8080](http://54.197.119.102:8080)). 
+> Está sendo utilizado **Elastic IP** na EC2. Assim, o endpoint público do backend permanece **estável** ([http://54.197.119.102:8080](http://54.197.119.102:8080))
 
 ---
 
 ## 2) Arquitetura
 
-| Camada   | Serviço                                      | Descrição                                                      |
-| -------- | -------------------------------------------- | -------------------------------------------------------------- |
-| Frontend | React (JavaScript)                           | UI para listar campanhas, detalhes e doações.                  |
-| Backend  | EC2 (Docker + Spring Boot)                   | API REST (CRUD campanhas + doações).                           |
-| Banco    | Amazon RDS (MySQL, privada)                  | Persistência relacional; acesso apenas via backend.            |
-| Gateway  | Amazon API Gateway                           | Roteia `/campanhas` → EC2 e `/report` → Lambda.                |
-| Função   | AWS Lambda (`/report`)                       | Consolida estatísticas (totais, top arrecadações, top causas). |
-| CI/CD    | GitHub + CodeBuild/CodePipeline (+ ECR opc.) | Build e deploy automatizáveis (opcional no escopo).            |
+| Camada   | Serviço                                      | Descrição                                                     |
+| -------- | -------------------------------------------- | --------------------------------------------------------------|
+| Frontend | React (JavaScript)                           | UI para deixar esteticamente bonito o design                  |
+| Backend  | EC2 (Docker + Spring Boot)                   | API REST (CRUD campanhas e as doações)                        |
+| Banco    | Amazon RDS (MySQL, privada)                  | Persistência relacional; acesso apenas via backend            |
+| Gateway  | Amazon API Gateway                           | Roteia `/campanhas` → EC2 e `/report` → Lambda                |
+| Função   | AWS Lambda (`/report`)                       | Consolida estatísticas (totais, top arrecadações e top causas)|
 
 ---
 
@@ -50,21 +49,21 @@ O **Portal de Doações Ajudaê** é uma plataforma simples e intuitiva para vis
 | PUT    | `/campanhas/{id}`      | Atualiza os dados de uma campanha                                              |
 | PUT    | `/campanhas/{id}/doar` | Registra uma doação na campanha específica                                     |
 | DELETE | `/campanhas/{id}`      | Exclui uma campanha                                                            |
-| GET    | `/report` (Lambda)     | Gera relatório consolidado (totais campanhas/doções, top arrecadações, causas) |
+| GET    | `/report` (Lambda)     | Gera relatório consolidado (totais campanhas/doções, top arrecadações e causas)|
 
 ---
 
 ## 4) Banco de Dados (Amazon RDS – MySQL)
 
-* **VPC:** RDS em subnet **privada**; sem exposição pública.
-* **Acesso:** apenas via backend (EC2).
+* **VPC:** RDS em subnet **privada**; sem exposição pública
+* **Acesso:** apenas via backend (EC2)
 
 **Config principais do Spring** (onde verificar e/ou definir):
 
-* `spring.datasource.url` → URL JDBC (endpoint **privado** do RDS).
-* `spring.datasource.username` / `spring.datasource.password` → credenciais.
-* `spring.jpa.hibernate.ddl-auto=update` → atualização automática do schema.
-* `spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect` → dialeto.
+* `spring.datasource.url` → URL JDBC (endpoint **privado** do RDS)
+* `spring.datasource.username` / `spring.datasource.password` → credenciais
+* `spring.jpa.hibernate.ddl-auto=update` → atualização automática do schema
+* `spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect` → dialeto
 
 ---
 
@@ -225,7 +224,7 @@ Esses comandos recompilam/rodam os containers do **backend** e **frontend**.
 
 **Variáveis:**
 
-* **Lambda:** `BACKEND_BASE_URL` (ex.: `http://54.197.119.102:8080`) para desacoplar o endpoint do código.
+* **Lambda:** `BACKEND_BASE_URL` (ex.: `http://54.197.119.102:8080`) para desacoplar o endpoint do código
 
 ---
 

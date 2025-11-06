@@ -221,7 +221,7 @@ Esses comandos recompilam/rodam os containers do **backend** e **frontend**.
 
 **Variáveis:**
 
-* **Lambda:** `BACKEND_BASE_URL` (ex.: `http://54.197.119.102:8080`) para desacoplar o endpoint do código
+* **Lambda:** `BACKEND_BASE_URL` (`http://54.197.119.102:8080`) 
 
 ---
 

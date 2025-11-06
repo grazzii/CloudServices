@@ -58,12 +58,9 @@ O **Portal de Doações Ajudaê** é um site de campanhas variadas, no qual é p
 * **VPC:** RDS em subnet **privada**; sem exposição pública
 * **Acesso:** apenas via backend (EC2)
 
-**Config principais do Spring** (onde verificar e/ou definir):
-
-* `spring.datasource.url` → URL JDBC (endpoint **privado** do RDS)
-* `spring.datasource.username` / `spring.datasource.password` → credenciais
-* `spring.jpa.hibernate.ddl-auto=update` → atualização automática do schema
-* `spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect` → dialeto
+O RDS MySQL guarda todas as informações tanto das campanhas quanto das doações.
+Ele foi criado em sub-rede privada, sem acesso direto da internet. Apenas a instância EC2 tem permissão de conexão, controlada pelo Security Group na porta 3306.
+O endpoint do banco é lab.cn00y8o8m69e.us-east-1.rds.amazonaws.com
 
 ---
 

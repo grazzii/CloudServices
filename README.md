@@ -1,89 +1,248 @@
 ## Serviços em Nuvem - 05J
 
-* **Graziely de Oliveira Severo RA: 10425431**
-* **Marcos Minhano RA: 10428577**
+# Projeto Integrador – Cloud Developing 2025/1
 
-***
+**URL do backend (EC2/EIP):** [http://54.197.119.102:8080](http://54.197.119.102:8080)
 
-## Visão Geral
+CRUD simples + API Gateway + Lambda `/report` + RDS 
 
-O Portal de Doações Ajudaê foi projetado para ser uma plataforma simples e intuitiva, permitindo a visualização e o gerenciamento de campanhas de arrecadação de fundos para diferentes causas. A aplicação utiliza Spring Boot no backend e JavaScript com React no frontend, proporcionando uma estrutura modular, escalável e fácil de manter. Este relatório detalha as principais decisões de design e arquitetura que guiaram o desenvolvimento da aplicação.
+---
 
-## Escolhas de Arquitetura
+## Grupo
 
-1. **Arquitetura RESTful**
-   
-   A aplicação segue o estilo RESTful para a comunicação entre o frontend e o backend. Cada recurso (por exemplo, campanhas) possui um endpoint específico, utilizando métodos HTTP apropriados (GET, POST, PUT, DELETE). Essa arquitetura permite que o frontend se comunique com o backend de maneira eficiente e escalável, facilitando futuras integrações e expansões.
+* 10425431 – Graziely de Oliveira Severo – SpringBoot/ RDS/ API GATEWAY/ Lambda/ Documentação / Vídeo2
+* 10428577 – Marcos Minhano – EC2/ VPC/ SpringBoot/ Documentação/ Vídeo1
 
-2. **Banco de Dados RDS AWS**
-   
-   X
+---
 
-3. **Autenticação e Controle de Acesso**
-   
-   A aplicação implementa um sistema de autenticação com diferentes níveis de acesso:
-   - Administrador (adm): Usuário com permissão para realizar operações completas de CRUD na área administrativa. A página administrativa é invisível para usuários não logados, sendo acessível apenas pelo próprio administrador.
-     
-   - Visitantes: Usuários com acesso limitado à visualização de campanhas e doações.
-   
-   A autenticação básica é realizada no backend, protegendo as rotas administrativas e garantindo que apenas usuários autorizados possam acessar e modificar dados sensíveis.
+## 1) Visão Geral
 
-## Escolhas de Design
+O **Portal de Doações Ajudaê** é uma plataforma simples e intuitiva para visualizar e gerenciar campanhas de arrecadação de fundos por causa.
+
+* **Backend:** Spring Boot (Java), containerizado.
+* **Frontend:** React (JavaScript).
+* **Infra AWS:** EC2, RDS MySQL, API Gateway e Lambda (rota `/report`).
+
+> Está sendo utilizado **Elastic IP** na EC2. Assim, o endpoint público do backend permanece **estável** ([http://54.197.119.102:8080](http://54.197.119.102:8080)). 
+
+---
+
+## 2) Arquitetura
+
+| Camada   | Serviço                                      | Descrição                                                      |
+| -------- | -------------------------------------------- | -------------------------------------------------------------- |
+| Frontend | React (JavaScript)                           | UI para listar campanhas, detalhes e doações.                  |
+| Backend  | EC2 (Docker + Spring Boot)                   | API REST (CRUD campanhas + doações).                           |
+| Banco    | Amazon RDS (MySQL, privada)                  | Persistência relacional; acesso apenas via backend.            |
+| Gateway  | Amazon API Gateway                           | Roteia `/campanhas` → EC2 e `/report` → Lambda.                |
+| Função   | AWS Lambda (`/report`)                       | Consolida estatísticas (totais, top arrecadações, top causas). |
+| CI/CD    | GitHub + CodeBuild/CodePipeline (+ ECR opc.) | Build e deploy automatizáveis (opcional no escopo).            |
+
+---
+
+## 3) Endpoints REST (Backend + Lambda)
+
+| Método | Endpoint               | Descrição                                                                      |
+| ------ | ---------------------- | -----------------------------------------------------------------------------  |
+| GET    | `/campanhas`           | Lista todas as campanhas com  as doações de cada uma                           |
+| GET    | `/campanhas/{id}`      | Retorna campanha específica                                                    |
+| POST   | `/campanhas`           | Cria uma nova campanha                                                         |
+| PUT    | `/campanhas/{id}`      | Atualiza os dados de uma campanha                                              |
+| PUT    | `/campanhas/{id}/doar` | Registra uma doação na campanha específica                                     |
+| DELETE | `/campanhas/{id}`      | Exclui uma campanha                                                            |
+| GET    | `/report` (Lambda)     | Gera relatório consolidado (totais campanhas/doções, top arrecadações, causas) |
+
+---
+
+## 4) Banco de Dados (Amazon RDS – MySQL)
+
+* **VPC:** RDS em subnet **privada**; sem exposição pública.
+* **Acesso:** apenas via backend (EC2).
+
+**Config principais do Spring** (onde verificar e/ou definir):
+
+* `spring.datasource.url` → URL JDBC (endpoint **privado** do RDS).
+* `spring.datasource.username` / `spring.datasource.password` → credenciais.
+* `spring.jpa.hibernate.ddl-auto=update` → atualização automática do schema.
+* `spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect` → dialeto.
+
+---
+
+## 5) Implementação da Lambda `/report`
+
+A função consome o endpoint do backend (`/api/campanhas`) e retorna um JSON com totais, **Top 3** campanhas por arrecadação e **Top 5** causas por incidência em ordem crescente
+
+**Variáveis de ambiente (Lambda):**
+
+* `BACKEND_BASE_URL` 
+
+### Código 
+
+```js
+// index.mjs
+export const handler = async () => {
+  const base = process.env.BACKEND_BASE_URL || "http://52.90.62.231:8080";
+  const url = `${base}/api/campanhas`;
+  const N = (v) => Number(v ?? 0);
+  const pct = (num, den) => (den > 0 ? ((num / den) * 100) : 0);
+  const brl = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(N(v));
+
+  try {
+    const r = await fetch(url, { method: "GET" });
+    const data = await r.json();
+    if (!Array.isArray(data)) throw new Error("Resposta inválida da API de campanhas");
+
+    const campanhas = data.map(c => {
+      const meta = N(c.meta);
+      const arrec = N(c.valorArrecadado);
+      return {
+        id: c.id ?? null,
+        nome: c.nome ?? null,
+        causa: (c.causa || "Indefinida").trim(),
+        meta,
+        arrec,
+        progresso: pct(arrec, meta)
+      };
+    });
+
+    let totalCampanhas = 0;
+    let totalDoacoesQtd = 0;
+    let totalArrecadadoGeral = 0;
+
+    for (const c of data) {
+      totalCampanhas += 1;
+      totalArrecadadoGeral += N(c.valorArrecadado);
+      if (Array.isArray(c.doacoes)) {
+        totalDoacoesQtd += c.doacoes.length;
+      } else if (c.quantidadeDoacoes != null) {
+        totalDoacoesQtd += N(c.quantidadeDoacoes);
+      }
+    }
+
+    const topArrecadados = [...campanhas]
+      .sort((a, b) => b.arrec - a.arrec)
+      .slice(0, 3)
+      .map(c => ({
+        id: c.id,
+        nome: c.nome,
+        causa: c.causa,
+        arrecadado: brl(c.arrec),
+        meta: brl(c.meta),
+        progresso: `${pct(c.arrec, c.meta).toFixed(2)}%`
+      }));
+
+    const causaMap = new Map();
+    for (const c of campanhas) {
+      const agg = causaMap.get(c.causa) || { causa: c.causa, qtd: 0, meta: 0, arrec: 0 };
+      agg.qtd += 1;
+      agg.meta += c.meta;
+      agg.arrec += c.arrec;
+      causaMap.set(c.causa, agg);
+    }
+
+    const topCausas = [...causaMap.values()]
+      .sort((a, b) => (b.qtd - a.qtd) || (b.arrec - a.arrec))
+      .slice(0, 5)
+      .map(x => ({
+        causa: x.causa,
+        campanhas: x.qtd,
+        arrecadadoTotal: brl(x.arrec),
+        metaTotal: brl(x.meta),
+        progressoMedio: `${pct(x.arrec, x.meta).toFixed(2)}%`
+      }));
+
+    const payload = {
+      totais: {
+        campanhas: { total: totalCampanhas },
+        doacoes: {
+          quantidadeTotal: totalDoacoesQtd,
+          valorTotal: brl(totalArrecadadoGeral)
+        }
+      },
+      relatorio: {
+        titulo: "Top Arrecadados & Top Causas",
+        geradoEm: new Date().toISOString(),
+        topArrecadados,
+        topCausas
+      },
+      meta: {
+        fonte: "EC2:/api/campanhas",
+        backend: { ok: r.ok, status: r.status }
+      }
+    };
+
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type,Authorization",
+        "Access-Control-Allow-Methods": "GET,OPTIONS"
+      },
+      body: JSON.stringify(payload)
+    };
+  } catch (err) {
+    return {
+      statusCode: 502,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      body: JSON.stringify({ error: "Falha ao gerar relatório", detail: String(err) })
+    };
+  }
+};
+```
+
+---
+
+## 6) Comandos Executados na EC2
+
+Após conectar na instância EC2, executar:
 
 
-1. **Paleta de Cores e Identidade Visual**
-   
-   - A aplicação utiliza uma paleta de cores verde e branca, que transmite tranquilidade, confiança e reforça o propósito da plataforma de ajudar causas sociais. O logotipo "Ajudaê" e outros elementos principais são destacados em verde, criando uma identidade visual coesa e atraente.
+cd ~/CloudServices
+docker compose up --build
 
-2. **Design Baseado em Componentes com React**
-   
-   - Cada elemento da interface, como cards de campanhas, formulários de login e botões de ação, foi implementado como um componente independente em React. Isso permite a reutilização de componentes e facilita a manutenção e evolução da interface.
-     
-   - A componentização também melhora o desempenho da aplicação, já que apenas os componentes necessários são renderizados ou atualizados durante as interações do usuário.
 
-3. **Organização e Usabilidade das Telas**
-   
-  - Tela Principal (Home):
-     - Exibe campanhas em formato de cards, contendo informações resumidas como título, descrição, meta de arrecadação, valor arrecadado e uma barra de progresso. Esse layout facilita a navegação e torna a visualização das campanhas intuitiva.
+Esses comandos recompilam/rodam os containers do **backend** e **frontend**.
 
-    ![image](https://github.com/user-attachments/assets/cb4b7907-84f2-49c7-aa6f-94da228b40ac)
+---
 
-  - Tela "Como Funciona":
-     - Organizada em etapas numeradas com ícones e descrições, ajuda o usuário a entender o processo de criação e divulgação de campanhas. Cada etapa se eleva ao passar o mouse, criando uma experiência interativa e amigável.
+## 7) Autenticação e Controle de Acesso
 
-    ![image](https://github.com/user-attachments/assets/3288713e-d05d-497e-a405-e5dd58a2320d)
+* **Administrador (adm):** CRUD completo em campanhas; páginas de controle ocultas a quem não possui as credenciais
+* **Visitantes:** Apenas visualização pública das campanhas, realizar doações, contato, e como funciona
+* Backend protege rotas sensíveis
 
-  - Tela de Contatos:
-     - Apresenta, de forma clara e visual, as responsabilidades de cada membro da equipe, mostrando quem contribuiu para a criação do projeto.
-    <img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/5f9ec2f1-4b68-4f28-a3f7-691f14cd1083" />
+---
 
-    
-  - Tela de Login:
-     - Utiliza um fundo em gradiente verde que alterna a paleta automaticamente, e um formulário centralizado, com efeitos sutis de expansão nos campos ao passar o mouse.
+## 8) Deploy / Integração com API Gateway
 
-    ![image](https://github.com/user-attachments/assets/f0164d7c-3ec9-4d40-8f41-d3ddc40c7a6a)
+* **Rotas CRUD** (`/campanhas`, `/campanhas/{id}`, …) → **Integration HTTP** apontando para **[http://54.197.119.102:8080](http://54.197.119.102:8080)** (IP, porta 8080)
+* **Rota** `/report` → **Integration Lambda** 
+* **CORS habilitado** (GET/POST/PUT/DELETE/OPTIONS) no API Gateway
 
-  - Caso as credencias estejam incorretas:
+**Variáveis:**
 
-    ![image](https://github.com/user-attachments/assets/3fa34e37-8140-4fc8-a9b8-3d262f321c7e)
+* **Lambda:** `BACKEND_BASE_URL` (ex.: `http://54.197.119.102:8080`) para desacoplar o endpoint do código.
 
-  - Recuperar senha (visual): 
+---
 
-    ![image](https://github.com/user-attachments/assets/92ea7003-1fd7-4135-8962-cca5f109150f)
+## 9) Como Rodar Localmente
 
-  - Tela Administrativa:
-    - Disponível apenas para administradores, permite operações de CRUD em campanhas, com botões de edição e criação bem destacados. Essa tela foi desenhada para maximizar a eficiência do administrador na gestão de campanhas.
-    
-    ![image](https://github.com/user-attachments/assets/c3e5d765-33bc-4576-a415-1de31f322222)
 
-4. **Interatividade e Feedback Visual**
-      
-  - Efeitos Hover e Animações: Cada card de campanha e etapa do processo "Como Funciona" possui um efeito de elevação ao passar o mouse, proporcionando uma experiência visual agradável e destacando os elementos interativos.
-  
-  - Barra de Progresso em Campanhas: Exibe o valor arrecadado em relação à meta, oferecendo um feedback visual imediato sobre o andamento das campanhas. Esse elemento incentiva os usuários a contribuir e acompanhar o progresso das causas.
+# 1) Clonar
+git clone https://github.com/grazzii/CloudServices.git
+cd CloudServices
 
-5. **Acessibilidade e Clareza nas Ações**
-      
-  - O uso de botões destacados e links como "Esqueceu a senha?" garante que os usuários possam navegar pelo site de maneira fácil e intuitiva. Além disso, os títulos e descrições foram escritos de forma clara, melhorando a experiência de usuários de diferentes perfis.
-  
-  - O site também possui um favicon com o nome ‘Animaê’, proporcionando uma identidade visual adicional que aparece na aba do navegador.
+# 2) Variáveis
+cp .env.example .env   # dite credenciais do seu BD
+
+# 3) Subir containers
+docker compose up --build
+
+
+**Endpoints locais**
+
+* Backend:  [http://localhost:8080](http://localhost:8080)

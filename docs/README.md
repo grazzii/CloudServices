@@ -29,6 +29,8 @@ O **Portal de Doações Ajudaê** é uma aplicação simples que reúne campanha
 
 ## 2) Arquitetura
 
+<img width="1904" height="1418" alt="Projeto 2" src="https://github.com/user-attachments/assets/072714e9-52ab-4f39-837c-3411284b9a7f" />
+
 
 
 | Camada       | Serviço                      | Descrição                                                                              |
